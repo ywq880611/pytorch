@@ -1068,6 +1068,11 @@ class triton:
     # Setting to None means uninitialized
     autotune_at_compile_time: Optional[bool] = None
 
+    # We use random tensors for autotune by default. Setting this as true will let us
+    # use inputs from sample inputs to autotune user defined triton kernels.
+    # Side effect for this option is increased memory footprint during first pass compilation.
+    autotune_with_sample_inputs: bool = False
+
     # Allows tiling reductions into multiple dimensions.
     # For best results, this should be used with prefer_nd_tiling.
     tile_reductions: bool = False
@@ -1160,7 +1165,7 @@ class triton:
     # Whether persistent matmul kernels should be enabled this flag only has effect when on h100
     # with a verison of triton new enough to support TMA
     enable_persistent_tma_matmul = (
-        os.environ.get("ENABLE_PERSISTENT_TMA_MATMUL", "0") == "1"
+        os.environ.get("ENABLE_PERSISTENT_TMA_MATMUL", "1") == "1"
     )
     # Skip L1 cache for buffers that are used only once.  Disabled by default
     skip_l1_cache = os.environ.get("TORCHINDUCTOR_SKIP_L1", "0") == "1"
